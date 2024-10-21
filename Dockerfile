@@ -1,14 +1,15 @@
+# Use an official Python base image
 FROM python:3.12-slim
 
+# Set the working directory
 WORKDIR /app
 
-COPY trainer.py ./
+# Copy dependency and Python files first
+COPY requirements.txt /app/requirements.txt
+COPY train.py /app/train.py
 
-RUN pip install --no-cache-dir \
-    scikit-learn \
-    xgboost \
-    pandas \
-    numpy \
-    joblib
+# Install dependencies
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-ENTRYPOINT ["python", "trainer.py"]
+# Use ENTRYPOINT to allow the script to receive arguments
+ENTRYPOINT ["python", "train.py"]

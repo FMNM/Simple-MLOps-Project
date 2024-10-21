@@ -1,0 +1,6 @@
+google-cloud-aiplatform
+google-cloud-storage
+xgboost
+scikit-learn
+pandas
+numpy
