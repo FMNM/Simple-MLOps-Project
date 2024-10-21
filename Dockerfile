@@ -1,15 +1,16 @@
-# Use an official Python base image
+# Dockerfile
 FROM python:3.12-slim
 
-# Set the working directory
 WORKDIR /app
 
-# Copy dependency and Python files first
-COPY requirements.txt /app/requirements.txt
-COPY train.py /app/train.py
+# Copy trainer.py
+COPY trainer.py ./trainer.py
+
+# Copy requirements.txt
+COPY requirements.txt ./
 
 # Install dependencies
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Use ENTRYPOINT to allow the script to receive arguments
-ENTRYPOINT ["python", "train.py"]
+# Set the entry point
+ENTRYPOINT ["python", "trainer.py"]
