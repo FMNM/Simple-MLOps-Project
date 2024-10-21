@@ -4,14 +4,36 @@ from custom_utils import bucket, hpt_job_id, location, project_id
 # Initialize Vertex AI
 aiplatform.init(project=project_id, location=location)
 
-# Get the hyperparameter tuning job
-hpt_job_name = f"projects/{project_id}/locations/{location}/hyperparameterTuningJobs/{hpt_job_id}"
-hpt_job = aiplatform.HyperparameterTuningJob(hpt_job_name)
+# Get the hyperparameter tuning jobs
+hpt_jobs = aiplatform.HyperparameterTuningJob.list(order_by="create_time desc")
+
+# Check if there are any hyperparameter tuning jobs
+if not hpt_jobs:
+    raise ValueError("No hyperparameter tuning jobs found.")
+
+# Get the latest hyperparameter tuning job
+latest_hpt_job = hpt_jobs[0]
 
 # Get the best trial
-best_trial = hpt_job.trials[0]
+best_trial = latest_hpt_job.trials[0]
 print("Best Trial Parameters:", best_trial.parameters)
-print("Best Trial MSE:", best_trial.final_measurement.metrics["MSE"])
+
+# Print all available metrics in the best trial's final measurement
+print("Available Metrics in Best Trial's Final Measurement:")
+for metric in best_trial.final_measurement.metrics:
+    print(f"Metric ID: {metric.metric_id}, Value: {metric.value}")
+
+# Find the MSE metric in the best trial's final measurement
+mse_metric = None
+for metric in best_trial.final_measurement.metrics:
+    if metric.metric_id == "MSE":
+        mse_metric = metric.value
+        break
+
+if mse_metric is None:
+    raise ValueError("MSE metric not found in the best trial's final measurement.")
+
+print("Best Trial MSE:", mse_metric)
 
 # Assuming the model is saved to Cloud Storage during training
 model_artifact_uri = f"gs://{bucket}/{hpt_job_id}"

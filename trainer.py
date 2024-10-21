@@ -2,7 +2,7 @@ import argparse
 import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import root_mean_squared_error
+from sklearn.metrics import mean_squared_error
 import joblib
 import os
 
@@ -27,7 +27,7 @@ def main(args):
 
     # Evaluate model
     preds = model.predict(X_val)
-    mse = root_mean_squared_error(y_val, preds)
+    mse = mean_squared_error(y_val, preds)
 
     # Save model and metrics
     os.makedirs(args.output_dir, exist_ok=True)
